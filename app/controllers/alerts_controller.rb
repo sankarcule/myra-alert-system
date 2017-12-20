@@ -1,5 +1,5 @@
 class AlertsController < ApplicationController
-  before_action :set_alert, only: [:destroy]
+  before_action :set_alert, only: [:revoke]
 
   # Returns the list of alerts
   #
@@ -11,7 +11,7 @@ class AlertsController < ApplicationController
 
   # Create Alert
   #
-  # @query_parameter [integer] reference_id
+  # @query_parameter [string] reference_id
   # @query_parameter [integer] delay
   # @query_parameter [string] description
   #
@@ -22,9 +22,15 @@ class AlertsController < ApplicationController
 
   # Delete Alert
   #
+  # @query_parameter [string] reference_id
   #
-  def destroy
-    @alert.destroy
+  def revoke
+    begin
+      unless @alert.try(:delay) < 60 || @alert.try(:delay) > 500
+        @alert.destroy
+      end
+    rescue
+    end
     head :no_content
   end
 
@@ -36,6 +42,6 @@ class AlertsController < ApplicationController
   end
 
   def set_alert
-    @alert = Alert.find(params[:id])
+      @alert = Alert.find_by_reference_id(params[:reference_id])
   end
 end

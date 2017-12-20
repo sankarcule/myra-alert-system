@@ -8,8 +8,7 @@ RSpec.describe 'Alerts API', type: :request do
     before { get '/alerts' }
 
     it 'returns alerts' do
-      expect(json).not_to be_empty
-      expect(json.size).to eq(10)
+      expect(json["alerts"].length).to eq(10)
     end
 
     it 'returns status code 200' do
@@ -18,13 +17,15 @@ RSpec.describe 'Alerts API', type: :request do
   end
 
   describe 'POST /alerts' do
-    let(:valid_attributes) { { reference_id: 1, delay: 20, description: 'not completed' } }
+    let(:valid_attributes) { { reference_id: '10', delay: 20, description: 'not completed' } }
 
     context 'when the request is valid' do
       before { post '/alerts', params: valid_attributes }
 
       it 'creates a alert' do
-        expect(json['reference_id']).to eq(1)
+        expect(json["alert"]["reference_id"]).to eq("10")
+        expect(json["alert"]["delay"]).to eq(20)
+        expect(json["alert"]["description"]).to eq("not completed")
       end
 
       it 'returns status code 201' do
@@ -33,7 +34,7 @@ RSpec.describe 'Alerts API', type: :request do
     end
 
     context 'when the request is invalid' do
-      before { post '/alerts', params: { reference_id: 1 } }
+      before { post '/alerts', params: { reference_id: '1' } }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
@@ -46,8 +47,8 @@ RSpec.describe 'Alerts API', type: :request do
     end
   end
 
-  describe 'DELETE /alerts/:id' do
-    before { delete "/alerts/#{alert_id}" }
+  describe 'DELETE /alerts/revoke' do
+    before { delete "/alerts/revoke", params: { reference_id: 'Transcription_start_1' } }
 
     it 'returns status code 204' do
       expect(response).to have_http_status(204)

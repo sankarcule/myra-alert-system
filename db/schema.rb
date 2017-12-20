@@ -10,13 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171219093840) do
+ActiveRecord::Schema.define(version: 20171219173010) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "alerts", force: :cascade do |t|
-    t.integer "reference_id"
+    t.string "reference_id"
     t.integer "delay"
     t.string "description"
     t.datetime "created_at", null: false
